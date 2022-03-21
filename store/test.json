@@ -1,0 +1,72 @@
+[
+  {
+    "section_title": "Performance",
+    "section_name": "Manages an officer's ability to manage and to get things done.",
+    "section_Data": {
+      "questions": [
+        {
+          "question_description": "Ability to aniticipate, determine goals, identify relevant information, set priorities and deadlines, and create a shared vision of the unit's and Coast Guard's future.",
+          "question_title": "PLANNING AND PREPAREDNESS",
+          "options": [
+            {
+              "op_id": "10",
+              "q_id": "3",
+              "option_text": "Got caught by the unexpected; appeared to be controlled by events. Set vague or unrealistic goals. Used unreasonable criteria to set priorities and deadlines. Rarely had plan of action. Failed to focus on relevant information.",
+              "option_weight": "1",
+              "is_enabled": "1"
+            },
+            {
+              "op_id": "11",
+              "q_id": "3",
+              "option_text": "Consistently prepared. Set high but realistic goals. Used sound criteria to set priorities and deadlines. Used quality tools and processes to develop action plans. Identified key information. Kept supervisors and stakeholders informed.",
+              "option_weight": "3",
+              "is_enabled": "1"
+            },
+            {
+              "op_id": "12",
+              "q_id": "3",
+              "option_text": "Exceptional preparation. Always looked beyond immediate events or problems. Skillfully balanced competing demands. Developed strategies with contingency plans. Assessed all aspects of problems, including underlying issues and impact.",
+              "option_weight": "5",
+              "is_enabled": "1"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "section_title": "Communication",
+    "section_name": "Manages an officer's ability to manage and to get things done.",
+    "section_Data": {
+      "questions": [
+        {
+          "question_description": "Ability to aniticipate, determine goals, identify relevant information, set priorities and deadlines, and create a shared vision of the unit's and Coast Guard's future.",
+          "question_title": "PLANNING AND PREPAREDNESS",
+          "options": [
+            {
+              "op_id": "10",
+              "q_id": "3",
+              "option_text": "Got caught by the unexpected; appeared to be controlled by events. Set vague or unrealistic goals. Used unreasonable criteria to set priorities and deadlines. Rarely had plan of action. Failed to focus on relevant information.",
+              "option_weight": "1",
+              "is_enabled": "1"
+            },
+            {
+              "op_id": "11",
+              "q_id": "3",
+              "option_text": "Consistently prepared. Set high but realistic goals. Used sound criteria to set priorities and deadlines. Used quality tools and processes to develop action plans. Identified key information. Kept supervisors and stakeholders informed.",
+              "option_weight": "3",
+              "is_enabled": "1"
+            },
+            {
+              "op_id": "12",
+              "q_id": "3",
+              "option_text": "Exceptional preparation. Always looked beyond immediate events or problems. Skillfully balanced competing demands. Developed strategies with contingency plans. Assessed all aspects of problems, including underlying issues and impact.",
+              "option_weight": "5",
+              "is_enabled": "1"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
