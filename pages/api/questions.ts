@@ -10,7 +10,6 @@ export default async function question(
     if (method === "GET") {
       const sections = await db.any("select * from formSection");
       const questions = await db.any(`select * from questions`);
-
       let data = sections.map((item: any) => {
         return {
           sectionTitle: item.sectiontitle,
@@ -19,15 +18,23 @@ export default async function question(
           //     (question: any) =>
           //       Number(question.fk_sections) === Number(item.sectionid)
           //   ),
-          questions: questions.map((question: any) => {
-            if (Number(question.fk_formsections) === Number(item.sectionid)) {
-              return {
-                questionsId: question.id,
-                questionTitle: question.questiontitle,
-                questionDescription: question.questiondescription,
-                options: question.options,
-              };
-            }
+          questions: questions.filter(
+            (question: any) =>
+              Number(question.fk_formsections) === Number(item.sectionid)
+          ),
+        };
+      });
+
+      data = data.map((dataItem: any) => {
+        return {
+          ...dataItem,
+          questions: dataItem.questions.map((item: any) => {
+            return {
+              questionsId: item.id,
+              questionTitle: item.questiontitle,
+              questionDescription: item.questiondescription,
+              options: item.options,
+            };
           }),
         };
       });

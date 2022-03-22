@@ -17,13 +17,17 @@ import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+interface ISections {
+  data: {
+    status: string;
+    sections: ISection[];
+  };
+}
+
 interface ISection {
-  status: string;
-  sections: {
-    sectionid: number;
-    sectiontitle: string;
-    sectiondescription: string;
-  }[];
+  sectionid: number;
+  sectiontitle: string;
+  sectiondescription: string;
 }
 
 export const AddQuestionForm = () => {
@@ -44,11 +48,11 @@ export const AddQuestionForm = () => {
     }
   );
 
-  const [formSections, setFormSections] = useState([]);
+  const [formSections, setFormSections] = useState<ISection[]>();
 
   const handleGetSections = async () => {
     try {
-      const sections: ISection = await axios.get("/api/sections");
+      const sections: ISections = await axios.get("/api/sections");
       setFormSections(sections.data.sections);
     } catch (error) {
       console.log(error);
@@ -71,8 +75,10 @@ export const AddQuestionForm = () => {
         <Heading my={4}>Add New Questions</Heading>
         <form
           onSubmit={handleSubmit(async (data) => {
+            console.log(data.questionDescription.replace("'", "''"));
             const resp = await axios.post("/api/questions", {
-              ...data,
+              questionDescription: data.questionDescription.replace("'", "''"),
+              questionTitle: data.questionTitle.replace("'", "''"),
               sectionId: data.section,
               options: data.optionsAndWeightage,
             });
@@ -92,7 +98,7 @@ export const AddQuestionForm = () => {
                   })}
                 >
                   <option>Select Section</option>
-                  {formSections.map((item) => (
+                  {formSections.map((item: ISection) => (
                     <option value={item.sectionid} key={item.sectionid}>
                       {item.sectiontitle}
                     </option>
@@ -114,6 +120,7 @@ export const AddQuestionForm = () => {
                   required: "Please enter question title.",
                 })}
               />
+              {console.log(errors)}
               {errors?.questionTitle?.type === "required" && (
                 <FormLabel color="brand.error" my="2">
                   Please enter question title
@@ -148,7 +155,7 @@ export const AddQuestionForm = () => {
                   />
                   {errors.optionsAndWeightage && (
                     <>
-                      {errors?.optionsAndWeightage[index]?.title?.type ===
+                      {errors?.optionsAndWeightage[index]?.optionTitle?.type ===
                         "required" && (
                         <FormLabel color="brand.error" my="2">
                           Please enter option title
@@ -161,21 +168,47 @@ export const AddQuestionForm = () => {
                 <FormControl>
                   <FormLabel>Weightage:</FormLabel>
                   <Input
-                    type="text"
+                    type="number"
                     placeholder="Enter option weightage"
                     {...register(
                       `optionsAndWeightage.${index}.optionWeightage`,
                       {
                         required: true,
+                        min: {
+                          value: 0,
+                          message: "Value should not be less than 0",
+                        },
+                        max: {
+                          value: 15,
+                          message: "Value should not be greater than 15",
+                        },
                       }
                     )}
                   />
                   {errors.optionsAndWeightage && (
                     <>
-                      {errors?.optionsAndWeightage[index]?.score?.type ===
-                        "required" && (
+                      {errors?.optionsAndWeightage[index]?.optionWeightage
+                        ?.type === "required" && (
                         <FormLabel color="brand.error" my="2">
-                          Please enter option score
+                          Please enter option Weigtage
+                        </FormLabel>
+                      )}
+                      {errors?.optionsAndWeightage[index]?.optionWeightage
+                        ?.type === "max" && (
+                        <FormLabel color="brand.error" my="2">
+                          {
+                            errors?.optionsAndWeightage[index]?.optionWeightage
+                              .message
+                          }
+                        </FormLabel>
+                      )}
+                      {errors?.optionsAndWeightage[index]?.optionWeightage
+                        ?.type === "min" && (
+                        <FormLabel color="brand.error" my="2">
+                          {
+                            errors?.optionsAndWeightage[index]?.optionWeightage
+                              .message
+                          }
                         </FormLabel>
                       )}
                     </>

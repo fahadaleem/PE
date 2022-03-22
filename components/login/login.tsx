@@ -10,16 +10,38 @@ import {
   useColorModeValue,
   HStack,
   VStack,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { BACKEND_URL } from "../../backend";
 import axios from "axios";
 import { useAuth } from "../../store";
+import { useState } from "react";
 
 interface ILoginAuth {
   email: string;
   password: string;
 }
+
+const ErrorAlert = ({ message, onClose }) => {
+  return (
+    <Alert status="error">
+      <AlertIcon />
+      <AlertTitle mr={2}>Error!</AlertTitle>
+      <AlertDescription>{message}.</AlertDescription>
+      <CloseButton
+        onClick={onClose}
+        position="absolute"
+        right="8px"
+        top="8px"
+      />
+    </Alert>
+  );
+};
 
 export const Login = () => {
   const {
@@ -29,6 +51,7 @@ export const Login = () => {
   } = useForm<ILoginAuth>();
 
   const setAuth = useAuth((state) => state.setAuth);
+  const [error, setError] = useState(null);
 
   const handleLogin = async (data: ILoginAuth) => {
     try {
@@ -37,12 +60,14 @@ export const Login = () => {
         setAuth(resp.data.user);
       }
     } catch (error) {
-      console.log(error);
+      // alert
+      setError(error?.response.data.message);
     }
   };
 
   return (
     <>
+      {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
       <Box
         minH="100vh"
         d="flex"

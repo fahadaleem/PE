@@ -18,10 +18,27 @@ import {
   RadioGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { INSPECT_MAX_BYTES } from "buffer";
 import { useEffect, useState } from "react";
+
+interface IQuestions {
+  sectionTitle: string;
+  sectionDescription: string;
+  questions: IQuestion[];
+}
+
+interface IQuestion {
+  questionId: number;
+  questionTitle: string;
+  questionDescription: string;
+  options: IOption[];
+}
+interface IOption {
+  optionTitle: string;
+  optionWeightage: string;
+}
+
 export const QuestionTable = () => {
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<[IQuestions]>();
 
   const handleGetQuestions = async () => {
     try {
@@ -41,11 +58,17 @@ export const QuestionTable = () => {
       {questions?.length &&
         questions.map((item, index) => {
           return (
-            <Box>
+            <Box key={index}>
               <Heading size="md">{item.sectionTitle}</Heading>
               {item.questions.map((question, quekey) => {
                 return (
-                  <HStack spacing={4} border="1px solid gray" p={4} my={6}>
+                  <HStack
+                    spacing={4}
+                    border="1px solid gray"
+                    p={4}
+                    my={6}
+                    key={quekey}
+                  >
                     <Box flex={2}>
                       <Heading size="md" fontWeight={600}>
                         {question.questionTitle}
@@ -61,9 +84,7 @@ export const QuestionTable = () => {
                           return (
                             <Box key={option.optionWeightage}>
                               <Radio value={option.optionWeightage.toString()}>
-                                {optionKey + 1}- Got caught by the unexpected
-                                appeared to be controlled by events. Set vague
-                                or unrealistic gaols
+                                {optionKey + 1}- {option.optionTitle}
                               </Radio>
                             </Box>
                           );
