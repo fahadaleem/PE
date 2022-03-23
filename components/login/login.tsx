@@ -27,7 +27,12 @@ interface ILoginAuth {
   password: string;
 }
 
-const ErrorAlert = ({ message, onClose }) => {
+interface IErrorAlert {
+  message: string;
+  onClose: () => void;
+}
+
+const ErrorAlert = ({ message, onClose }: IErrorAlert) => {
   return (
     <Alert status="error">
       <AlertIcon />
@@ -59,7 +64,7 @@ export const Login = () => {
       if (resp.data.status === "success") {
         setAuth(resp.data.user);
       }
-    } catch (error) {
+    } catch (error: any) {
       // alert
       setError(error?.response.data.message);
     }
