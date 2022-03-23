@@ -14,10 +14,6 @@ export default async function question(
         return {
           sectionTitle: item.sectiontitle,
           sectionDescription: item.sectiondescription,
-          //   questions: questions.filter(
-          //     (question: any) =>
-          //       Number(question.fk_sections) === Number(item.sectionid)
-          //   ),
           questions: questions.filter(
             (question: any) =>
               Number(question.fk_formsections) === Number(item.sectionid)
@@ -52,6 +48,7 @@ export default async function question(
       res
         .status(200)
         .json({ status: "success", message: "Data added successfully!" });
+    } else if (method === "DELETE") {
     }
   } catch (err: any) {
     res.status(401).json({ status: "error", message: "Something went wrong" });
