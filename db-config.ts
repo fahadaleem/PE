@@ -31,4 +31,11 @@ const scripts = {
 	fk_formSections int references formsection(sectionid))
 `,
   insertQuestion: `INSERT INTO questions VALUES (1, 'Planning and preparedness', 'Ability to anticipate, determine goals, identify relevant information, set priorities and deadlines and create a shared vision of the unit and coast guard future', '[{"optionTitle":"Got caught"}]', 1)`,
+  createStudents: `CREATE TABLE students (
+	pNO serial primary key, 
+	userName varchar(255) not null, 
+	fatherName varchar(255) not null, 
+	courseName varchar(255) not null
+)`,
+  insertStudents: `insert into students (userName, fatherName, courseName) values ('fahad aleem','muhammad aleem', 'ICS')`,
 };

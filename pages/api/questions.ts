@@ -7,6 +7,10 @@ export default async function question(
 ) {
   try {
     const { method } = req;
+    // GET
+    // POST
+    // DELETE
+    // PUT
     if (method === "GET") {
       const sections = await db.any("select * from formSection");
       const questions = await db.any(`select * from questions`);
