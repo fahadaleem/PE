@@ -80,17 +80,15 @@ export const QuestionTable = () => {
         questions.map((item, index) => {
           return (
             <Box key={index} my={7}>
-              <Heading size="md">{item.sectionTitle}</Heading>
+              <HStack>
+                <Heading size="md">{item.sectionTitle}:</Heading>
+                <Text size="sm">{item.sectionDescription} </Text>
+              </HStack>
+
               {item.questions.map((question, quekey) => {
                 return (
                   <>
-                    <HStack
-                      spacing={4}
-                      border="1px solid gray"
-                      p={4}
-                      my={3}
-                      key={quekey}
-                    >
+                    <Box border="1px solid gray" p={4} my={3} key={quekey}>
                       <Box flex={2}>
                         <Heading size="md" fontWeight={600}>
                           {question.questionTitle}
@@ -101,21 +99,17 @@ export const QuestionTable = () => {
                       </Box>
 
                       <RadioGroup flex={2}>
-                        <HStack>
-                          {question.options.map((option, optionKey) => {
-                            return (
-                              <Box key={option.optionWeightage}>
-                                <Radio
-                                  value={option.optionWeightage.toString()}
-                                >
-                                  {optionKey + 1}- {option.optionTitle}
-                                </Radio>
-                              </Box>
-                            );
-                          })}
-                        </HStack>
+                        {question.options.map((option, optionKey) => {
+                          return (
+                            <Box key={option.optionWeightage}>
+                              <Radio value={option.optionWeightage.toString()}>
+                                {optionKey + 1}- {option.optionTitle}
+                              </Radio>
+                            </Box>
+                          );
+                        })}
                       </RadioGroup>
-                    </HStack>
+                    </Box>
                     {console.log(question)}
                     <Text
                       as="span"
