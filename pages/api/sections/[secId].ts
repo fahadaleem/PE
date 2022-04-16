@@ -1,17 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../db-config";
+import { db } from "../../../db-config";
 
-export default async function question(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
     const { method } = req;
-    // GET
-    // POST
-    // DELETE
-    // PUT
     if (method === "GET") {
+      const { secId } = req.query;
       const mainSections = await db.any("select * from main_section");
       const questions = await db.any(`select * from questions`);
       const subSections = await db.any("select * from sub_sections;");
@@ -60,18 +57,23 @@ export default async function question(
                         };
                       }),
                   }),
-                  questions: questions
-                    .filter(
-                      (question: any) =>
-                        question.fk_sub_sections == subSection.section_id
-                    )
-                    .map((question: any) => {
-                      return {
-                        questionId: question.question_id,
-                        questionTitle: question.question_title,
-                        options: question.options,
-                      };
-                    }),
+                  ...(!subSubSections.filter(
+                    (subSubSection: any) =>
+                      subSection.section_id == subSubSection.fk_sub_section
+                  ).length && {
+                    questions: questions
+                      .filter(
+                        (question: any) =>
+                          question.fk_sub_sections == subSection.section_id
+                      )
+                      .map((question: any) => {
+                        return {
+                          questionId: question.question_id,
+                          questionTitle: question.question_title,
+                          options: question.options,
+                        };
+                      }),
+                  }),
                 };
               }),
           },
@@ -102,23 +104,12 @@ export default async function question(
       //   };
       // });
 
+      data = data.filter((item) => item.mainSection.sectionId == secId);
+
       res.status(200).json({ status: "success", data });
-    } else if (method === "POST") {
-      const {
-        body: { sectionId, questionTitle, questionDescription, options },
-      } = req;
-      await db.query(
-        `INSERT INTO questions (questiontitle, questiondescription, options, fk_formsections) VALUES ('${questionTitle}', '${questionDescription}', '${JSON.stringify(
-          options
-        )}', ${sectionId})`
-      );
-      res
-        .status(200)
-        .json({ status: "success", message: "Data added successfully!" });
-    } else if (method === "DELETE") {
     }
-  } catch (err: any) {
+  } catch (err) {
     console.log(err);
-    res.status(401).json({ status: "error", message: "Something went wrong" });
+    res.status(404).json("error");
   }
 }
