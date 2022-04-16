@@ -22,15 +22,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface IQuestions {
-  sectionTitle: string;
-  sectionDescription: string;
-  questions: IQuestion[];
+  mainSection: {
+    sectionTitle: string;
+    subSection: {
+      sectionTitle: string;
+      sectionDescription: string;
+      questions: IQuestion[];
+    }[];
+  };
 }
 
 interface IQuestion {
   questionsId: number;
-  questionTitle: string;
-  questionDescription: string;
+  questiontitle: string;
+  questiondescription: string;
   options: IOption[];
 }
 interface IOption {
@@ -65,6 +70,7 @@ export const QuestionTable = () => {
     try {
       const resp = await axios.get("/api/questions");
       setQuestions(resp.data.data);
+      console.log(resp);
     } catch (error) {
       console.log(error);
     }
@@ -80,52 +86,65 @@ export const QuestionTable = () => {
         questions.map((item, index) => {
           return (
             <Box key={index} my={7}>
-              <HStack>
-                <Heading size="md">{item.sectionTitle}:</Heading>
-                <Text size="sm">{item.sectionDescription} </Text>
-              </HStack>
+              <Heading>{item.mainSection.sectionTitle}</Heading>
+              {item.mainSection.subSection.length > 0 &&
+                item.mainSection.subSection.map((subSection) => {
+                  return (
+                    <Box>
+                      <HStack>
+                        <Heading size="md">{subSection.sectionTitle}:</Heading>
+                        <Text size="sm">{subSection.sectionDescription} </Text>
+                      </HStack>
+                      {subSection.questions.map((question, quekey) => {
+                        return (
+                          <>
+                            <Box
+                              border="1px solid gray"
+                              p={4}
+                              my={3}
+                              key={quekey}
+                            >
+                              <Box flex={2}>
+                                <Heading size="md" fontWeight={600}>
+                                  {question.questiontitle}
+                                </Heading>
+                                <Text fontWeight={300}>
+                                  {question.questiondescription}
+                                </Text>
+                              </Box>
 
-              {item.questions.map((question, quekey) => {
-                return (
-                  <>
-                    <Box border="1px solid gray" p={4} my={3} key={quekey}>
-                      <Box flex={2}>
-                        <Heading size="md" fontWeight={600}>
-                          {question.questionTitle}
-                        </Heading>
-                        <Text fontWeight={300}>
-                          {question.questionDescription}
-                        </Text>
-                      </Box>
-
-                      <RadioGroup flex={2}>
-                        {question.options.map((option, optionKey) => {
-                          return (
-                            <Box key={option.optionWeightage}>
-                              <Radio value={option.optionWeightage.toString()}>
-                                {optionKey + 1}- {option.optionTitle}
-                              </Radio>
+                              <RadioGroup flex={2}>
+                                {question.options.map((option, optionKey) => {
+                                  return (
+                                    <Box key={option.optionWeightage}>
+                                      <Radio
+                                        value={option.optionWeightage.toString()}
+                                      >
+                                        {optionKey + 1}- {option.optionTitle}
+                                      </Radio>
+                                    </Box>
+                                  );
+                                })}
+                              </RadioGroup>
                             </Box>
-                          );
-                        })}
-                      </RadioGroup>
+                            <Text
+                              as="span"
+                              _hover={{
+                                color: "red",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleDeleteQuestions(question.questionsId)
+                              }
+                            >
+                              Click to delete this question
+                            </Text>
+                          </>
+                        );
+                      })}
                     </Box>
-                    {console.log(question)}
-                    <Text
-                      as="span"
-                      _hover={{
-                        color: "red",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        handleDeleteQuestions(question.questionsId)
-                      }
-                    >
-                      Click to delete this question
-                    </Text>
-                  </>
-                );
-              })}
+                  );
+                })}
             </Box>
           );
         })}

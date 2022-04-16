@@ -18,10 +18,11 @@ const scripts = {
   createSectionTable: `CREATE TABLE formSection (
 	sectionid bigint primary key,
 	sectiontitle varchar(255) not null,
-	sectiondescription text not null
-)`,
-  insertSection: `INSERT INTO formSection (sectionid, sectiontitle, sectionDescription) VALUES (
-1, 'PERFORMANCE OF DUTIES', 'Measures an officer ability to manage and to get thins done'
+	sectiondescription text not null,
+	fk_mainsection int references main_sections(sectionId) 
+	)`,
+  insertSection: `INSERT INTO formSection (sectionid, sectiontitle, sectionDescription, fk_mainsection) VALUES (
+1, 'PERFORMANCE OF DUTIES', 'Measures an officer ability to manage and to get thins done', 1
 )`,
   createQuestionTable: `CREATE TABLE questions (
 	id bigint primary key,
@@ -32,10 +33,15 @@ const scripts = {
 `,
   insertQuestion: `INSERT INTO questions VALUES (1, 'Planning and preparedness', 'Ability to anticipate, determine goals, identify relevant information, set priorities and deadlines and create a shared vision of the unit and coast guard future', '[{"optionTitle":"Got caught"}]', 1)`,
   createStudents: `CREATE TABLE students (
-	pNO serial primary key, 
+	pNO serial primary key,
 	userName varchar(255) not null, 
 	fatherName varchar(255) not null, 
 	courseName varchar(255) not null
 )`,
   insertStudents: `insert into students (userName, fatherName, courseName) values ('fahad aleem','muhammad aleem', 'ICS')`,
+  insertMainSections: `INSERT INTO public."mainSections" values ('Professional Attributes');`,
+  createMainSections: `CREATE TABLE main_sections (
+	sectionId bigSerial primary key,
+	sectionTitle varchar(255) not null
+)`,
 };
