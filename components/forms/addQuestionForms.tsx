@@ -132,7 +132,7 @@ export const AddQuestionForm = () => {
                   }}
                   value={mainSection}
                 >
-                  <option>Select Section</option>
+                  <option value={""}>Select Section</option>
                   {formSections.map((item: ISection) => (
                     <option value={item.section_id} key={item.section_id}>
                       {item.section_title}
@@ -146,7 +146,8 @@ export const AddQuestionForm = () => {
                 )}
               </FormControl>
             )}
-            {subSections.length > 0 && (
+            {mainSection && <>
+              {subSections.length > 0 && (
               <FormControl>
                 <FormLabel>Select Sub Section</FormLabel>
                 <Select
@@ -154,7 +155,7 @@ export const AddQuestionForm = () => {
                     required: "Select sub section",
                   })}
                 >
-                  <option>Select sub Section</option>
+                  <option >Select sub Section</option>
                   {subSections.map((item: ISection) => (
                     <option value={item.section_id} key={item.section_id}>
                       {item.section_title}
@@ -216,7 +217,7 @@ export const AddQuestionForm = () => {
                 </FormLabel>
               )}
             </FormControl>
-            {fields.length && <Heading>Add Options</Heading>}
+            {fields.length.length>0 && <Heading>Add Options</Heading>}
             {fields.map((field, index) => (
               <HStack width="100%" spacing={8} key={index}>
                 <FormControl>
@@ -309,7 +310,7 @@ export const AddQuestionForm = () => {
               <Button bg="brand.primary" color="white" px={14} type="submit">
                 Submit
               </Button>
-            </FormControl>
+            </FormControl></>}
           </VStack>
         </form>
       </Box>

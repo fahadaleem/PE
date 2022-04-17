@@ -12,24 +12,47 @@ INSERT INTO users (username, email, password, role) VALUES (
 	'fahad aleem', 'fahad.aleem@ivl.com','123456', 'Admin'
 );
 
-CREATE TABLE formSection (
-	sectionid bigint primary key,
-	sectiontitle varchar(255) not null,
-	sectiondescription text not null
+CREATE TABLE main_section (
+	section_id bigserial primary key,
+	section_title varchar(255) not null,
+	is_expanded boolean not null
 );
 
-INSERT INTO formSection (sectionid, sectiontitle, sectionDescription) VALUES (
-1, 'PERFORMANCE OF DUTIES', 'Measures an officer ability to manage and to get thins done'
+INSERT INTO main_section (section_title, is_expanded) VALUES (
+'PN Core Values', true
+);
+
+INSERT INTO main_section (section_title, is_expanded) VALUES (
+'Professional Attributes', false
+);
+
+
+CREATE TABLE sub_sections (
+	section_id bigserial primary key,
+	section_title varchar(255) not null,
+	section_description text not null, 
+	fk_main_section int references main_section(section_id)
+	);
+
+INSERT INTO sub_sections (section_title, section_description, fk_main_section) 	VALUES (
+	'Characteristic', 'this is a new section', 1
+);
+
+CREATE TABLE sub_sub_sections (
+		section_id bigserial primary key,
+	section_title varchar(255) not null,
+	fk_sub_section int references sub_sections(section_id)
 );
 
 CREATE TABLE questions (
-	id bigint primary key,
-	questiontitle varchar(255) not null,
-	questiondescription varchar(255) not null,
-	options json null null,
-	fk_formSections int references formsection(sectionid));
+	question_id bigserial primary key,
+	question_title varchar(255) not null,
+	question_description varchar(255) not null,
+	options json not null,
+	fk_sub_sections int references sub_sections(section_id),
+	fk_sub_sub_sections int references sub_sub_sections(section_id));
+	
 
-INSERT INTO questions VALUES (1, 'Planning and preparedness', 'Ability to anticipate, determine goals, identify relevant information, set priorities and deadlines and create a shared vision of the unit and coast guard future', '[{"optionTitle":"Got caught", "optionWeightage":"3"}]', 1);
 
 CREATE TABLE students (
 	pNO serial primary key, 
