@@ -80,31 +80,7 @@ export default async function handler(
         };
       });
 
-      // let data = mainSections.map((item: any) => {
-      //   return {
-      //     mainSection: {
-      //       sectionTitle: item.sectiontitle,
-      //       subSection: sections
-      //         .filter(
-      //           (section: any) => section.fk_mainsection == item.sectionid
-      //         )
-      //         .map((subSection: any) => {
-      //           return {
-      //             sectionTitle: subSection.sectiontitle,
-      //             sectionDescription: subSection.sectiondescription,
-      //             questions: questions.filter(
-      //               (question: any) =>
-      //                 Number(question.fk_formsections) ===
-      //                 Number(subSection.sectionid)
-      //             ),
-      //           };
-      //         }),
-
-      //     },
-      //   };
-      // });
-
-      data = data.filter((item) => item.mainSection.sectionId == secId);
+      data = data.filter((item: any) => item.mainSection.sectionId == secId);
 
       res.status(200).json({ status: "success", data });
     }

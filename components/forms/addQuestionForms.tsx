@@ -12,6 +12,7 @@ import {
   VStack,
   Text,
   Button,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
@@ -25,9 +26,9 @@ interface ISections {
 }
 
 interface ISection {
-  sectionid: number;
-  sectiontitle: string;
-  sectiondescription: string;
+  section_id: number;
+  section_title: string;
+  is_expanded: boolean;
 }
 
 export const AddQuestionForm = () => {
@@ -38,6 +39,7 @@ export const AddQuestionForm = () => {
     getValues,
     control,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -48,12 +50,29 @@ export const AddQuestionForm = () => {
     }
   );
 
-  const [formSections, setFormSections] = useState<ISection[]>();
+  const watchMainSections = watch("mainSection");
+  const [mainSection, setMainSection] = useState("");
 
+  useEffect(() => {
+    handleGetSubSections(mainSection);
+    reset();
+  }, [mainSection]);
+
+  const [formSections, setFormSections] = useState<ISection[]>();
+  const [subSections, setSubSections] = useState([]);
   const handleGetSections = async () => {
     try {
-      const sections: ISections = await axios.get("/api/sections");
+      const sections: ISections = await axios.get("/api/mainSections");
       setFormSections(sections.data.sections);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGetSubSections = async (mainSecId: number) => {
+    try {
+      const sections = await axios.get(`/api/subSections/${mainSecId}`);
+      setSubSections(sections.data.sections);
     } catch (error) {
       console.log(error);
     }
@@ -73,14 +92,26 @@ export const AddQuestionForm = () => {
         my={10}
       >
         <Heading my={4}>Add New Questions</Heading>
+
         <form
           onSubmit={handleSubmit(async (data) => {
-            console.log(data.questionDescription.replace("'", "''"));
+            console.log({
+              questionDescription: data.questionDescription.replace("'", "''"),
+              questionTitle: data.questionTitle.replace("'", "''"),
+              mainSection: mainSection,
+              options: data.optionsAndWeightage,
+              subSection: data.subSection,
+              ...(formSections?.filter((item) => item.section_id == mainSection)[0]?
+                .is_expanded && {subSubSection:data.subSubSection})
+            });
             const resp = await axios.post("/api/questions", {
               questionDescription: data.questionDescription.replace("'", "''"),
               questionTitle: data.questionTitle.replace("'", "''"),
-              sectionId: data.section,
+              mainSection: mainSection,
               options: data.optionsAndWeightage,
+              subSection: data.subSection,
+              ...(formSections?.filter((item) => item.section_id == mainSection)[0]?
+                .is_expanded && {subSubSection:data.subSubSection})
             });
             if (resp.data.status === "success") {
               alert("New question added");
@@ -91,26 +122,71 @@ export const AddQuestionForm = () => {
           <VStack spacing={4} alignItems="flex-start">
             {formSections && (
               <FormControl>
-                <FormLabel>Select Section</FormLabel>
+                <FormLabel>Select Main Section</FormLabel>
                 <Select
-                  {...register("section", {
-                    required: "Select Section",
-                  })}
+                  // {...register("mainSection", {
+                  //   required: "Select Section",
+                  // })}
+                  onChange={(e) => {
+                    setMainSection(e.target.value);
+                  }}
+                  value={mainSection}
                 >
                   <option>Select Section</option>
                   {formSections.map((item: ISection) => (
-                    <option value={item.sectionid} key={item.sectionid}>
-                      {item.sectiontitle}
+                    <option value={item.section_id} key={item.section_id}>
+                      {item.section_title}
                     </option>
                   ))}
                 </Select>
-                {errors?.section?.type === "required" && (
+                {errors?.mainSection?.type === "required" && (
                   <FormLabel color="brand.error" my="2">
                     Please select section
                   </FormLabel>
                 )}
               </FormControl>
             )}
+            {subSections.length > 0 && (
+              <FormControl>
+                <FormLabel>Select Sub Section</FormLabel>
+                <Select
+                  {...register("subSection", {
+                    required: "Select sub section",
+                  })}
+                >
+                  <option>Select sub Section</option>
+                  {subSections.map((item: ISection) => (
+                    <option value={item.section_id} key={item.section_id}>
+                      {item.section_title}
+                    </option>
+                  ))}
+                </Select>
+                {errors?.subSection?.type === "required" && (
+                  <FormLabel color="brand.error" my="2">
+                    Please select sub section
+                  </FormLabel>
+                )}
+              </FormControl>
+            )}
+            {!isNaN(mainSection) &&
+              formSections?.filter((item) => item.section_id == mainSection)[0]?
+                .is_expanded && (
+                <FormControl>
+                  <FormLabel>Sub Sub Section</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Enter sub sub section"
+                    {...register("subSubSection", {
+                      required: "Please enter sub sub section.",
+                    })}
+                  />
+                  {errors?.subSubSection?.type === "required" && (
+                    <FormLabel color="brand.error" my="2">
+                      Please enter sub sub section.
+                    </FormLabel>
+                  )}
+                </FormControl>
+              )}
             <FormControl>
               <FormLabel>Question Title</FormLabel>
               <Input
@@ -120,7 +196,6 @@ export const AddQuestionForm = () => {
                   required: "Please enter question title.",
                 })}
               />
-              {console.log(errors)}
               {errors?.questionTitle?.type === "required" && (
                 <FormLabel color="brand.error" my="2">
                   Please enter question title

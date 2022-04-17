@@ -14,7 +14,7 @@ export default async function sections(
   try {
     const { method } = req;
     if (method === "GET") {
-      const sections = await db.any("SELECT * FROM formSection", [true]);
+      const sections = await db.any("SELECT * FROM sub_sections", [true]);
       res.status(200).json({ status: "success", sections });
       return;
     }

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../db-config";
+import { db } from "../../../db-config";
 
 interface IResponse {
   status: string;
@@ -14,7 +14,12 @@ export default async function sections(
   try {
     const { method } = req;
     if (method === "GET") {
-      const sections = await db.any("SELECT * FROM main_section", [true]);
+      const { mainSecId } = req.query;
+
+      let sections = await db.any("SELECT * FROM sub_sections", [true]);
+      sections = sections.filter(
+        (item: any) => mainSecId == item.fk_main_section
+      );
       res.status(200).json({ status: "success", sections });
       return;
     }

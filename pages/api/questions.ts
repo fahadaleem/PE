@@ -105,13 +105,38 @@ export default async function question(
       res.status(200).json({ status: "success", data });
     } else if (method === "POST") {
       const {
-        body: { sectionId, questionTitle, questionDescription, options },
+        body: {
+          mainSection,
+          questionTitle,
+          questionDescription,
+          options,
+          subSection,
+          subSubSection,
+        },
       } = req;
-      await db.query(
-        `INSERT INTO questions (questiontitle, questiondescription, options, fk_formsections) VALUES ('${questionTitle}', '${questionDescription}', '${JSON.stringify(
-          options
-        )}', ${sectionId})`
-      );
+
+      if (!subSubSection) {
+        await db.query(
+          `INSERT INTO questions (question_title, question_description, options, fk_sub_sections, fk_sub_sub_sections ) VALUES 
+('${questionTitle}', '${questionDescription}', '${JSON.stringify(
+            options
+          )}', ${subSection}, null)`
+        );
+      } else {
+        const resp = await db.query(
+          // `INSERT INTO sub_sub_sections (section_title, fk_sub_section) VALUES ('${subSubSection}',${subSection} )`
+          `INSERT INTO sub_sub_sections (section_title, fk_sub_section) VALUES ('${subSubSection}',${subSection} ); 
+SELECT * FROM sub_sub_sections where section_title='${subSubSection}' LIMIT 1;`
+        );
+
+        await db.query(
+          `INSERT INTO questions (question_title, question_description, options, fk_sub_sections, fk_sub_sub_sections ) VALUES
+        ('${questionTitle}', '${questionDescription}', '${JSON.stringify(
+            options
+          )}', null, ${resp[0].section_id})`
+        );
+      }
+
       res
         .status(200)
         .json({ status: "success", message: "Data added successfully!" });
