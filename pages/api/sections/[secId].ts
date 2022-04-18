@@ -28,52 +28,56 @@ export default async function handler(
                 return {
                   subSectionId: subSection.section_id,
                   subSectionTitle: subSection.section_title,
-                  ...(subSubSections.filter(
-                    (subSubSection: any) =>
-                      subSection.section_id == subSubSection.fk_sub_section
-                  ).length && {
-                    subSubSection: subSubSections
-                      .filter(
-                        (subSubSection: any) =>
-                          subSection.section_id == subSubSection.fk_sub_section
-                      )
-                      .map((subSubSection: any) => {
-                        return {
-                          subSubSectionId: subSubSection.section_id,
-                          subSubSectionTitle: subSubSection.section_title,
-                          questions: questions
-                            .filter(
-                              (question: any) =>
-                                question.fk_sub_sub_sections ==
-                                subSubSection.section_id
-                            )
-                            .map((question: any) => {
-                              return {
-                                questionId: question.question_id,
-                                questionTitle: question.question_title,
-                                options: question.options,
-                              };
-                            }),
-                        };
-                      }),
-                  }),
-                  ...(!subSubSections.filter(
-                    (subSubSection: any) =>
-                      subSection.section_id == subSubSection.fk_sub_section
-                  ).length && {
-                    questions: questions
-                      .filter(
-                        (question: any) =>
-                          question.fk_sub_sections == subSection.section_id
-                      )
-                      .map((question: any) => {
-                        return {
-                          questionId: question.question_id,
-                          questionTitle: question.question_title,
-                          options: question.options,
-                        };
-                      }),
-                  }),
+                  subSectionDescription: subSection.section_description,
+                  // ...(subSubSections.filter(
+                  //   (subSubSection: any) =>
+                  //     subSection.section_id == subSubSection.fk_sub_section
+                  // ).length && {
+                  //   subSubSection: subSubSections
+                  //     .filter(
+                  //       (subSubSection: any) =>
+                  //         subSection.section_id == subSubSection.fk_sub_section
+                  //     )
+                  //     .map((subSubSection: any) => {
+                  //       return {
+                  //         subSubSectionId: subSubSection.section_id,
+                  //         subSubSectionTitle: subSubSection.section_title,
+                  //         questions: questions
+                  //           .filter(
+                  //             (question: any) =>
+                  //               question.fk_sub_sub_sections ==
+                  //               subSubSection.section_id
+                  //           )
+                  //           .map((question: any) => {
+                  //             return {
+                  //               questionId: question.question_id,
+                  //               questionTitle: question.question_title,
+                  //               questionDescription:
+                  //                 question.question_description,
+                  //               options: question.options,
+                  //             };
+                  //           }),
+                  //       };
+                  //     }),
+                  // }),
+                  // ...(!subSubSections.filter(
+                  //   (subSubSection: any) =>
+                  //     subSection.section_id == subSubSection.fk_sub_section
+                  // ).length && {
+                  questions: questions
+                    .filter(
+                      (question: any) =>
+                        question.fk_sub_sections == subSection.section_id
+                    )
+                    .map((question: any) => {
+                      return {
+                        questionId: question.question_id,
+                        questionTitle: question.question_title,
+                        questionDescription: question.question_description,
+                        options: question.options,
+                      };
+                    }),
+                  // }),
                 };
               }),
           },

@@ -169,7 +169,7 @@ export const AddQuestionForm = () => {
                 )}
               </FormControl>
             )}
-            {!isNaN(mainSection) &&
+            {/* {!isNaN(mainSection) &&
               formSections?.filter((item) => item.section_id == mainSection)[0]?
                 .is_expanded && (
                 <FormControl>
@@ -187,7 +187,7 @@ export const AddQuestionForm = () => {
                     </FormLabel>
                   )}
                 </FormControl>
-              )}
+              )} */}
             <FormControl>
               <FormLabel>Question Title</FormLabel>
               <Input

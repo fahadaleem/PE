@@ -24,10 +24,10 @@ const Links = [
     label: "Add Questions",
     link: "/add-questions",
   },
-  // {
-  //   label: "View Form",
-  //   link: "/questions",
-  // },
+  {
+    label: "View Form",
+    link: "/questions",
+  },
 ];
 
 const NavLink = ({ children, link }: { children: ReactNode; link: string }) => (

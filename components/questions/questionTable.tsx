@@ -17,6 +17,8 @@ import {
   Radio,
   RadioGroup,
   useToast,
+  ButtonGroup,
+  Button,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -46,6 +48,8 @@ interface IOption {
 export const QuestionTable = () => {
   const [questions, setQuestions] = useState<[IQuestions]>();
   const toast = useToast();
+  const [formSections, setFormSections] = useState<any[]>();
+  const [sectionData, setSectionData] = useState(null);
 
   const handleDeleteQuestions = async (qid: number) => {
     try {
@@ -59,95 +63,87 @@ export const QuestionTable = () => {
           duration: 3000,
           isClosable: true,
         });
-        handleGetQuestions();
+        // handleGetQuestions();
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleGetQuestions = async () => {
+  const handleGetSections = async () => {
     try {
-      const resp = await axios.get("/api/questions");
-      setQuestions(resp.data.data);
-      console.log(resp);
+      const sections = await axios.get("/api/mainSections");
+      setFormSections(sections.data.sections);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    handleGetQuestions();
+    handleGetSections();
   }, []);
+
+  const handleGetQuestions = async (id) => {
+    try {
+      const sections = await axios.get(`/api/sections/${id}`);
+      setSectionData(sections.data.data[0]?.mainSection);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container maxW="container.xl" my={8}>
       <Heading>Form</Heading>
-      {questions?.length &&
-        questions.map((item, index) => {
+      <ButtonGroup>
+        {formSections?.map((item: any) => {
           return (
-            <Box key={index} my={7}>
-              <Heading>{item.mainSection.sectionTitle}</Heading>
-              {item.mainSection.subSection.length > 0 &&
-                item.mainSection.subSection.map((subSection) => {
-                  return (
-                    <Box>
-                      <HStack>
-                        <Heading size="md">{subSection.sectionTitle}:</Heading>
-                        <Text size="sm">{subSection.sectionDescription} </Text>
-                      </HStack>
-                      {subSection.questions.map((question, quekey) => {
-                        return (
-                          <>
-                            <Box
-                              border="1px solid gray"
-                              p={4}
-                              my={3}
-                              key={quekey}
-                            >
-                              <Box flex={2}>
-                                <Heading size="md" fontWeight={600}>
-                                  {question.questiontitle}
-                                </Heading>
-                                <Text fontWeight={300}>
-                                  {question.questiondescription}
-                                </Text>
-                              </Box>
-
-                              <RadioGroup flex={2}>
-                                {question.options.map((option, optionKey) => {
-                                  return (
-                                    <Box key={option.optionWeightage}>
-                                      <Radio
-                                        value={option.optionWeightage.toString()}
-                                      >
-                                        {optionKey + 1}- {option.optionTitle}
-                                      </Radio>
-                                    </Box>
-                                  );
-                                })}
-                              </RadioGroup>
-                            </Box>
-                            <Text
-                              as="span"
-                              _hover={{
-                                color: "red",
-                                cursor: "pointer",
-                              }}
-                              onClick={() =>
-                                handleDeleteQuestions(question.questionsId)
-                              }
-                            >
-                              Click to delete this question
-                            </Text>
-                          </>
-                        );
-                      })}
-                    </Box>
-                  );
-                })}
-            </Box>
+            <Button onClick={() => handleGetQuestions(item.section_id)}>
+              {item.section_title}
+            </Button>
           );
         })}
+      </ButtonGroup>
+      {sectionData && (
+        <Box my={4}>
+          <Heading>{sectionData?.sectionTitle}</Heading>
+          {sectionData.subSections?.map((item: any) => {
+            return (
+              <Box>
+                <Heading fontSize={"xl"} px={2} display={"flex"}>
+                  {`${item.subSectionTitle}: `}
+                  <Text mx={3} fontWeight={300}>
+                    {item.subSectionDescription}
+                  </Text>
+                </Heading>
+                <Box px={5}>
+                  {item.questions?.map((questions: any) => {
+                    return (
+                      <Box border={"1px solid #e5e5e5"} p={3} my={3}>
+                        <Heading fontSize={"md"}>
+                          - {`${questions.questionTitle}:  `}
+                          <Text fontWeight={300}>
+                            {questions.questionDescription}
+                          </Text>
+                        </Heading>
+                        {questions.options?.map((option: any) => {
+                          return (
+                            <RadioGroup name="option">
+                              <Radio value={option.optionWeightage}>
+                                {option.optionTitle}
+                              </Radio>
+                            </RadioGroup>
+                          );
+                        })}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      )}
     </Container>
   );
 };
